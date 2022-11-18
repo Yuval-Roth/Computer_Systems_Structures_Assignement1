@@ -21,7 +21,10 @@ namespace Components
         //A bit setting the memory operation to read or write
         public Wire Load { get; private set; }
 
-        //your code here
+        BitwiseMultiwayMux mux;
+        BitwiseMultiwayDemux demux;
+        MultiBitRegister[] MBRs;
+
 
         public Memory(int iAddressSize, int iWordSize)
         {
@@ -33,7 +36,21 @@ namespace Components
             Address = new WireSet(AddressSize);
             Load = new Wire();
 
-            //your code here
+            mux = new BitwiseMultiwayMux(WordSize, AddressSize);
+            demux = new BitwiseMultiwayDemux(1,AddressSize);
+            demux.Input[0].ConnectInput(Load);
+            mux.ConnectControl(Address);
+            demux.ConnectControl(Address);
+
+            MBRs = new MultiBitRegister[(int)Math.Pow(2,AddressSize)];
+            for (int i = 0; i < MBRs.Length; i++)
+            {
+                MBRs[i] = new MultiBitRegister(WordSize);
+                MBRs[i].Load.ConnectInput(demux.Outputs[i][0]);
+                MBRs[i].ConnectInput(Input);
+                mux.ConnectInput(i,MBRs[i].Output);
+            }
+            Output.ConnectInput(mux.Output);
 
         }
 
@@ -46,7 +63,6 @@ namespace Components
             Address.ConnectInput(wsAddress);
         }
 
-
         public override void OnClockUp()
         {
         }
@@ -57,12 +73,40 @@ namespace Components
 
         public override string ToString()
         {
-            throw new NotImplementedException();
+            string output = "Memory -> \n";
+            output += "Input->" + Input +", Load->"+Load +", Address->" + Address + "\n Registers -> \n";
+            for (int i = 0; i < MBRs.Length; i++)
+            {
+                output += MBRs[i] + "\n";
+            }
+            output += "Output ->" + Output;
+            return output;
         }
 
         public override bool TestGate()
         {
-            throw new NotImplementedException();
+            Random rand = new Random();
+            Load.Value = 1;
+
+
+            for(int j = 0; j < 10; j++)
+            {
+                for (int i = 0; i < WordSize; i++)
+                {
+                    Input[i].Value = rand.Next(0, 2);
+                }
+                for (int i = 0; i < AddressSize; i++)
+                {
+                    Address[i].Value = rand.Next(0, 2);
+                }
+
+                int address = Convert.ToInt32(Address.ToString()[1..^1], 2);
+                Clock.ClockDown();
+                Clock.ClockUp();
+                if (Input.Get2sComplement() != MBRs[address].Output.Get2sComplement()) return false;
+                if (NAndGate.Corrupt == false) Console.WriteLine(this);
+            }
+            return true;
         }
     }
 }

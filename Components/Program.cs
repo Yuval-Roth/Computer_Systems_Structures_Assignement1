@@ -23,10 +23,37 @@ namespace Components
             {
                 GateTest(gate);
             }
+
+            SequentialGate[] sequential = {
+                new Memory(3,5),
+            };
+            foreach (SequentialGate gate in sequential)
+            {
+                GateTest(gate);
+            }
+
         }
         static void GateTest(Gate gate)
         {
             Console.WriteLine("testing " + gate.GetType().Name +"\n");
+            if (!gate.TestGate())
+                Console.WriteLine("bugbug");
+
+            NAndGate.Corrupt = true;
+
+            if (gate.TestGate())
+            {
+                if (gate is BitwiseNotGate) Console.WriteLine("\nnAnd corruption test skipped");
+                else Console.WriteLine("bugbug");
+            }
+            else Console.WriteLine("\nnAnd corruption test successfull!");
+
+            NAndGate.Corrupt = false;
+            Console.WriteLine("================================================");
+        }
+        static void GateTest(SequentialGate gate)
+        {
+            Console.WriteLine("testing " + gate.GetType().Name + "\n");
             if (!gate.TestGate())
                 Console.WriteLine("bugbug");
 
