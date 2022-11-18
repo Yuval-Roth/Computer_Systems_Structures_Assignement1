@@ -9,6 +9,40 @@ namespace Components
     {
         static void Main(string[] args)
         {
+            Tests_1_4();
+
+        }
+        static void Tests_1_4()
+        {
+            Gate[] gates = {
+                new SingleBitRegister(),
+            };
+
+            foreach (Gate gate in gates)
+            {
+                GateTest(gate);
+            }
+        }
+        static void GateTest(Gate gate)
+        {
+            Console.WriteLine("testing " + gate.GetType().Name +"\n");
+            if (!gate.TestGate())
+                Console.WriteLine("bugbug");
+
+            NAndGate.Corrupt = true;
+
+            if (gate.TestGate())
+            {
+                if (gate is BitwiseNotGate) Console.WriteLine("\nnAnd corruption test skipped");
+                else Console.WriteLine("bugbug");
+            }
+            else Console.WriteLine("\nnAnd corruption test successfull!");
+
+            NAndGate.Corrupt = false;
+            Console.WriteLine("================================================");
+        }
+        static void TestsUpTo_1_3() 
+        {
             Gate[] gates = {
                 new OrGate(),
                 new XorGate(),
@@ -64,25 +98,6 @@ namespace Components
             }
 
             GateTest(new ALU(6));
-
-        }
-        static void GateTest(Gate gate)
-        {
-            Console.WriteLine("testing " + gate.GetType().Name +"\n");
-            if (!gate.TestGate())
-                Console.WriteLine("bugbug");
-
-            NAndGate.Corrupt = true;
-
-            if (gate.TestGate())
-            {
-                if (gate is BitwiseNotGate) Console.WriteLine("\nnAnd corruption test skipped");
-                else Console.WriteLine("bugbug");
-            }
-            else Console.WriteLine("\nnAnd corruption test successfull!");
-
-            NAndGate.Corrupt = false;
-            Console.WriteLine("================================================");
         }
     }
 }

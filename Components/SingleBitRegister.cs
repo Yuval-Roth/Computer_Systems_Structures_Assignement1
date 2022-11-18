@@ -13,12 +13,22 @@ namespace Components
         //A bit setting the register operation to read or write
         public Wire Load { get; private set; }
 
+        DFlipFlopGate DFF;
+        MuxGate mux;
+
         public SingleBitRegister()
         {
             
             Input = new Wire();
             Load = new Wire();
-            //your code here 
+            DFF = new DFlipFlopGate();
+            mux = new MuxGate();
+
+            mux.ConnectControl(Load);
+            mux.ConnectInput1(DFF.Output);
+            mux.ConnectInput2(Input);
+            DFF.ConnectInput(mux.Output);
+            Output = DFF.Output;
 
         }
 
@@ -28,16 +38,41 @@ namespace Components
         }
 
       
-
         public void ConnectLoad(Wire wLoad)
         {
             Load.ConnectInput(wLoad);
         }
 
-
+        public override string ToString()
+        {
+            return "SBR: Input->" + Input + ", Load->" + Load + " Output->" + Output;
+        }
         public override bool TestGate()
         {
-            throw new NotImplementedException();
+            Load.Value = 1;
+            Input.Value = 1;
+            if (NAndGate.Corrupt == false) Console.WriteLine("Input->1");
+            Clock.ClockDown();
+            if (NAndGate.Corrupt == false) Console.WriteLine("Tick!");
+            if (NAndGate.Corrupt == false) Console.WriteLine(this);
+            if (Output.Value != 0) return false;
+            Clock.ClockUp();
+            if (NAndGate.Corrupt == false) Console.WriteLine("Tock!");
+            if (NAndGate.Corrupt == false) Console.WriteLine(this);
+            if (Output.Value != 1) return false;
+
+            if (NAndGate.Corrupt == false) Console.WriteLine("\n\n\nInput->0");
+            Input.Value = 0;
+            Clock.ClockDown();
+            if (NAndGate.Corrupt == false) Console.WriteLine("Tick!");
+            if (NAndGate.Corrupt == false) Console.WriteLine(this);
+            if (Output.Value != 1) return false;
+            Clock.ClockUp();
+            if (NAndGate.Corrupt == false) Console.WriteLine("Tock!");
+            if (NAndGate.Corrupt == false) Console.WriteLine(this);
+            if (Output.Value != 0) return false;
+
+            return true;
         }
     }
 }
