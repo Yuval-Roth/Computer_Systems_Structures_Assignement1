@@ -52,10 +52,12 @@ namespace Components
         public static void ClockUp()
         {
             m_cClock.Up();
+            if (NAndGate.Corrupt == false) Console.WriteLine("Tock!");
         }
         public static void ClockDown()
         {
             m_cClock.Down();
+            if (NAndGate.Corrupt == false) Console.WriteLine("Tick!");
         }
     }
 }

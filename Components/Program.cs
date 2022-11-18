@@ -16,6 +16,7 @@ namespace Components
         {
             Gate[] gates = {
                 new SingleBitRegister(),
+                new MultiBitRegister(5),
             };
 
             foreach (Gate gate in gates)

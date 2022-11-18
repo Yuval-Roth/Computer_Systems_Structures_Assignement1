@@ -53,22 +53,19 @@ namespace Components
             Input.Value = 1;
             if (NAndGate.Corrupt == false) Console.WriteLine("Input->1");
             Clock.ClockDown();
-            if (NAndGate.Corrupt == false) Console.WriteLine("Tick!");
             if (NAndGate.Corrupt == false) Console.WriteLine(this);
             if (Output.Value != 0) return false;
             Clock.ClockUp();
-            if (NAndGate.Corrupt == false) Console.WriteLine("Tock!");
+            
             if (NAndGate.Corrupt == false) Console.WriteLine(this);
             if (Output.Value != 1) return false;
 
             if (NAndGate.Corrupt == false) Console.WriteLine("\n\n\nInput->0");
             Input.Value = 0;
             Clock.ClockDown();
-            if (NAndGate.Corrupt == false) Console.WriteLine("Tick!");
             if (NAndGate.Corrupt == false) Console.WriteLine(this);
             if (Output.Value != 1) return false;
             Clock.ClockUp();
-            if (NAndGate.Corrupt == false) Console.WriteLine("Tock!");
             if (NAndGate.Corrupt == false) Console.WriteLine(this);
             if (Output.Value != 0) return false;
 

@@ -16,6 +16,8 @@ namespace Components
         //Word size - number of bits in the register
         public int Size { get; private set; }
 
+        SingleBitRegister[] SBRs;
+
 
         public MultiBitRegister(int iSize)
         {
@@ -23,8 +25,14 @@ namespace Components
             Input = new WireSet(Size);
             Output = new WireSet(Size);
             Load = new Wire();
-            //your code here
-
+            SBRs = new SingleBitRegister[Size];
+            for (int i = 0; i < SBRs.Length; i++)
+            {
+                SBRs[i] = new SingleBitRegister();
+                SBRs[i].ConnectLoad(Load);
+                SBRs[i].ConnectInput(Input[i]);
+                Output[i].ConnectInput(SBRs[i].Output);
+            }
         }
 
         public void ConnectInput(WireSet wsInput)
@@ -32,16 +40,33 @@ namespace Components
             Input.ConnectInput(wsInput);
         }
 
-        
         public override string ToString()
         {
-            return Output.ToString();
+            return "MBR: Input->" + Input + ", Load->" + Load + " Output->" + Output;
         }
-
-
         public override bool TestGate()
         {
-            throw new NotImplementedException();
+            Load.Value = 1;
+            Input.SetValue(1);
+            if (NAndGate.Corrupt == false) Console.WriteLine("Input->"+Input);
+            Clock.ClockDown();
+            if (NAndGate.Corrupt == false) Console.WriteLine(this);
+            if (Output.Get2sComplement() != 0) return false;
+            Clock.ClockUp();
+
+            if (NAndGate.Corrupt == false) Console.WriteLine(this);
+            if (Output.Get2sComplement() != 1) return false;
+
+            if (NAndGate.Corrupt == false) Console.WriteLine("\n\n\nInput->"+Input);
+            Input.SetValue(0);
+            Clock.ClockDown();
+            if (NAndGate.Corrupt == false) Console.WriteLine(this);
+            if (Output.Get2sComplement() != 1) return false;
+            Clock.ClockUp();
+            if (NAndGate.Corrupt == false) Console.WriteLine(this);
+            if (Output.Get2sComplement() != 0) return false;
+
+            return true;
         }
     }
 }
