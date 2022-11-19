@@ -57,8 +57,8 @@ namespace Components
             if (NAndGate.Corrupt == false) Console.WriteLine(this);
             if (Output.Get2sComplement() != 1) return false;
 
-            if (NAndGate.Corrupt == false) Console.WriteLine("\n\n\nInput->"+Input);
             Input.SetValue(0);
+            if (NAndGate.Corrupt == false) Console.WriteLine("\n\n\nInput->"+Input);
             Clock.ClockDown();
             if (NAndGate.Corrupt == false) Console.WriteLine(this);
             if (Output.Get2sComplement() != 1) return false;
