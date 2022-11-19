@@ -27,7 +27,8 @@ namespace Components
 
 
         public Memory(int iAddressSize, int iWordSize)
-        {
+        { 
+
             AddressSize = iAddressSize;
             WordSize = iWordSize;
 
@@ -85,8 +86,12 @@ namespace Components
 
         public override bool TestGate()
         {
-            Random rand = new Random();
             Load.Value = 1;
+            Input.SetValue(0);
+            Clock.ClockDown();
+            Clock.ClockUp();
+
+            Random rand = new Random();
 
 
             for(int j = 0; j < 10; j++)

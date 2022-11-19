@@ -47,6 +47,10 @@ namespace Components
         public override bool TestGate()
         {
             Load.Value = 1;
+            Input.SetValue(0);
+            Clock.ClockDown();
+            Clock.ClockUp();
+
             Input.SetValue(1);
             if (NAndGate.Corrupt == false) Console.WriteLine("Input->"+Input);
             Clock.ClockDown();
